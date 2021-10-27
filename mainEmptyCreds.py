@@ -137,7 +137,7 @@ while True:
     fahr = temp * (9/5) + 32.0
     hum = sensor.humidity()
     # Saves all DHT info to a var we can then use to append to our sensor list
-    sensorLogFormated = " Temp: " + str(hum) + " - Fahr: " + str(fahr) + " - Humidity: " + str(hum)
+    sensorLogFormated = " Temp: " + str(temp) + " - Fahr: " + str(fahr) + " - Humidity: " + str(hum)
 
     try:
         sleep(2)
