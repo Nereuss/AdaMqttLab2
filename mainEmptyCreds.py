@@ -6,10 +6,10 @@ import sys
 import randomJoke
 from time import sleep
 from umqtt.robust import MQTTClient
-
 from machine import Pin
 
 counter = 0
+
 
 client = None  # mqtt client
 
@@ -20,11 +20,11 @@ sensor = dht.DHT11(Pin(17))
 sensorLogs = []
 
 credentials = {
-    "ssid": "---Insert here---",
-    "password": "---Insert here---",
+    "ssid": "---Insert Here---",
+    "password": "---Insert Here---",
     "ADAFRUIT_IO_URL": b"io.adafruit.com",
-    "ADAFRUIT_USERNAME": b"---Insert here---",
-    "ADAFRUIT_IO_KEY": b"---Insert here---",
+    "ADAFRUIT_USERNAME": b"---Insert Here---",
+    "ADAFRUIT_IO_KEY": b"---Insert Here---",
     "ADAFRUIT_IO_PUB_FEEDNAME": b"bot_pub",
     "ADAFRUIT_IO_SUB_FEEDNAME": b"bot_sub",
 }
@@ -103,6 +103,26 @@ def connectWifi():
         pass
     print("network config: ", wifi.ifconfig())
 
+# 3.3 Appends to sensorLog with the log info from the while loop
+def appendToLogs(newLog):
+    sensorLogs.append(newLog)
+
+# 3.4
+def getLogs():
+    # Saves the last 10 logs to a new list. If it was -5 it would take last 5
+    # In slicing : for start or end depending where it is -10 indexes to the end/: of the file
+    # if it was a list of 1 to 5, and with 2: = 3,4,5 || :3 = 1,2,3
+    # if its double :: it means it will take it from start to finish
+    lastSensorLogs = sensorLogs[-10:]
+    # We make a empty variable outside the forloop scope
+    logsToAda = ""
+    for log in lastSensorLogs:
+        #We append \n to make a new line for each log on Adafruit terminal
+        logsToAda += "\n " + log
+    return logsToAda
+
+
+
 # Runs connectWifi once
 connectWifi()
 
@@ -121,8 +141,7 @@ while True:
 
     try:
         sleep(2)
-        print(sensorLogFormated)
-        sensorLogs.append(sensorLogFormated)
+        appendToLogs(sensorLogFormated)
         if counter >= 500:
             # Deletes the logs in this example so we wont get memory leak of the increasing sensor log size
             sensorLogs.clear()
@@ -141,22 +160,10 @@ while True:
         if m == "tilføj ny måling til listen jarvis":
             client.publish(topic=mqtt_pub_feedname, msg="Tilføjer ny måling...")
             # We append the formated sensor log variable from the start in while loop
-            sensorLogs.append(sensorLogFormated)
-
+            appendToLogs(sensorLogFormated)
         if m == "lav 10 temperaturmålinger jarvis":
-            # Saves the last 10 logs to a new list. If it was -5 it would take last 5
-            # In slicing : for start or end depending where it is -10 indexes to the end/: of the file
-            # if it was a list of 1 to 5, and with 2: = 3,4,5 || :3 = 1,2,3
-            # if its double :: it means it will take it from start to finish
-            lastSensorLogs = sensorLogs[-10:]
-            print(lastSensorLogs)
-            # We make a empty variable outside the forloop scope
-            logsToAda = ""
-            for log in lastSensorLogs:
-                #We append \n to make a new line for each log on Adafruit terminal
-                logsToAda += "\n " + log
-
-            client.publish(topic=mqtt_pub_feedname, msg=logsToAda)
+            # Calls getLogs() function, which returns last 10 logs
+            client.publish(topic=mqtt_pub_feedname, msg=getLogs())
 
         #Clears the message after the message if checks, else it will loop the same if statement
         m = ""
