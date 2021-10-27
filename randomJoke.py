@@ -14,6 +14,6 @@ jokes=[
 'My wife asked me to stop singing “Wonderwall” to her. I said maybe…'
 ]
 
-# Returns a random joke from array to the function which calls it
+# Returns a random joke from array to the caller which calls it
 def someJoke():
     return random.choice(jokes)
