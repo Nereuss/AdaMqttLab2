@@ -1,5 +1,6 @@
 import random
 
+# 3.2
 # All these are random dad jokes from google, comedy quality not taken in account
 jokes=[
 'Which bear is the most condescending? A pan-duh!',
@@ -14,6 +15,7 @@ jokes=[
 'My wife asked me to stop singing “Wonderwall” to her. I said maybe…'
 ]
 
+# 3.1
 # Returns a random joke from array to the caller which calls it
 def someJoke():
     return random.choice(jokes)
